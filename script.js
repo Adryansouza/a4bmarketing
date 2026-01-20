@@ -6,9 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             const target = document.querySelector(this.getAttribute('href'));
             if (target) {
-                target.scrollIntoView({
-                    behavior: 'smooth'
-                });
+                target.scrollIntoView({ behavior: 'smooth' });
             }
         });
     });
@@ -74,14 +72,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('leadForm');
 
     if (form) {
-        form.addEventListener('submit', function (e) {
+        form.addEventListener('submit', async function (e) {
             e.preventDefault();
 
             const btn = form.querySelector('button');
             const originalText = btn.innerText;
 
-            btn.innerHTML = 'Enviando...';
+            btn.innerText = 'Enviando...';
             btn.style.opacity = '0.7';
+            btn.disabled = true;
 
             const data = {
                 nome: form.nome.value,
@@ -90,33 +89,40 @@ document.addEventListener('DOMContentLoaded', () => {
                 faturamento: form.faturamento.value
             };
 
-            fetch("https://script.google.com/macros/s/AKfycbxin_STTPJ9PUwsc90Ny1u7eRMfuwqEPr8Fzb8pkRx0EXWcZnytwAI3NiRhIfBqA7fw/exec", {
-                method: "POST",
-                body: JSON.stringify(data)
-            })
-                .then(response => response.json())
-                .then(result => {
-                    btn.innerHTML = 'Recebido! Entraremos em contato.';
+            try {
+                const response = await fetch(
+                    "https://script.google.com/macros/s/AKfycbxin_STTPJ9PUwsc90Ny1u7eRMfuwqEPr8Fzb8pkRx0EXWcZnytwAI3NiRhIfBqA7fw/exec",
+                    {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify(data)
+                    }
+                );
+
+                const result = await response.json();
+
+                if (result.status === "sucesso") {
+                    btn.innerText = 'Recebido! Entraremos em contato.';
                     btn.style.background = '#10b981';
                     form.reset();
+                } else {
+                    throw new Error("Erro na API");
+                }
 
-                    setTimeout(() => {
-                        btn.innerText = originalText;
-                        btn.style.background = '';
-                        btn.style.opacity = '1';
-                    }, 4000);
-                })
-                .catch(error => {
-                    console.error("Erro ao enviar:", error);
-                    btn.innerHTML = 'Erro ao enviar. Tente novamente.';
-                    btn.style.background = '#ef4444';
+            } catch (error) {
+                console.error("Erro ao enviar:", error);
+                btn.innerText = 'Erro ao enviar. Tente novamente.';
+                btn.style.background = '#ef4444';
+            }
 
-                    setTimeout(() => {
-                        btn.innerText = originalText;
-                        btn.style.background = '';
-                        btn.style.opacity = '1';
-                    }, 4000);
-                });
+            setTimeout(() => {
+                btn.innerText = originalText;
+                btn.style.background = '';
+                btn.style.opacity = '1';
+                btn.disabled = false;
+            }, 4000);
         });
     }
 
