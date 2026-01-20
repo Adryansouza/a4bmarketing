@@ -392,6 +392,12 @@ select:focus {
     box-shadow: 0 0 10px rgba(124, 58, 237, 0.2);
 }
 
+/* Fix for dropdown options visibility */
+select option {
+    background-color: var(--bg-color);
+    color: var(--text-primary);
+}
+
 /* Mobile */
 @media (max-width: 768px) {
     h1 {
