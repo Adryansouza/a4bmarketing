@@ -92,7 +92,7 @@ document.addEventListener('DOMContentLoaded', () => {
             btn.style.opacity = '0.7';
 
             setTimeout(() => {
-                btn.innerHTML = 'Recebido! Entraremos em contato 🚀';
+                btn.innerHTML = 'Recebido! Entraremos em contato.';
                 btn.style.background = '#10b981'; // Success Green
                 form.reset();
 
