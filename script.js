@@ -71,7 +71,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Form Handling + Envio para Google Sheets ---
     const form = document.getElementById('leadForm');
 
-
     if (form) {
         form.addEventListener('submit', async function (e) {
             e.preventDefault();
@@ -83,22 +82,18 @@ document.addEventListener('DOMContentLoaded', () => {
             btn.style.opacity = '0.7';
             btn.disabled = true;
 
-            const data = {
-                nome: form.querySelector('[name="nome"]').value,
-                email: form.querySelector('[name="email"]').value,
-                whatsapp: form.querySelector('[name="whatsapp"]').value,
-                faturamento: form.querySelector('[name="faturamento"]').value
-            };
+            const formData = new FormData();
+            formData.append("nome", form.querySelector('[name="nome"]').value);
+            formData.append("email", form.querySelector('[name="email"]').value);
+            formData.append("whatsapp", form.querySelector('[name="whatsapp"]').value);
+            formData.append("faturamento", form.querySelector('[name="faturamento"]').value);
 
             try {
                 const response = await fetch(
                     "https://script.google.com/macros/s/AKfycbxin_STTPJ9PUwsc90Ny1u7eRMfuwqEPr8Fzb8pkRx0EXWcZnytwAI3NiRhIfBqA7fw/exec",
                     {
                         method: "POST",
-                        headers: {
-                            "Content-Type": "application/json"
-                        },
-                        body: JSON.stringify(data)
+                        body: formData
                     }
                 );
 
