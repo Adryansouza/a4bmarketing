@@ -52,25 +52,15 @@ document.addEventListener('DOMContentLoaded', () => {
         const counters = document.querySelectorAll('.stat-number');
         counters.forEach(counter => {
             const target = +counter.getAttribute('data-target');
-            const suffix = counter.innerText.replace(/[0-9]/g, ''); // Get non-numeric chars like +, %, M
-
             let count = 0;
-            const inc = target / 50; // Speed
+            const inc = target / 50;
 
             const updateCount = () => {
                 count += inc;
                 if (count < target) {
-                    counter.innerText = Math.ceil(count) + suffix; // Append suffix manually for simple animation
-                    // Note: This is a basic implementation. Ideally we separate number and suffix in HTML.
-                    // For this specific design, we'll keep it simple or stick to the static text if complex suffixes interfere.
-                    // Re-setting to text content for smoother visual in this demo:
                     counter.innerText = Math.ceil(count);
                     setTimeout(updateCount, 20);
                 } else {
-                    counter.innerText = target;
-                    // Restore original text formatting if needed, or simple add suffix back
-                    if (suffix) counter.innerText += suffix;
-                    // Special case for the "2000000" -> "+2M"
                     if (target === 2000000) counter.innerText = "+2M";
                     if (target === 15000) counter.innerText = "+15k";
                     if (target === 98) counter.innerText = "98%";
@@ -80,28 +70,54 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- Form Handling ---
+    // --- Form Handling + Envio para Google Sheets ---
     const form = document.getElementById('leadForm');
+
     if (form) {
-        form.addEventListener('submit', (e) => {
+        form.addEventListener('submit', function (e) {
             e.preventDefault();
+
             const btn = form.querySelector('button');
             const originalText = btn.innerText;
 
             btn.innerHTML = 'Enviando...';
             btn.style.opacity = '0.7';
 
-            setTimeout(() => {
-                btn.innerHTML = 'Recebido! Entraremos em contato.';
-                btn.style.background = '#10b981'; // Success Green
-                form.reset();
+            const data = {
+                nome: form.nome.value,
+                email: form.email.value,
+                whatsapp: form.whatsapp.value,
+                faturamento: form.faturamento.value
+            };
 
-                setTimeout(() => {
-                    btn.innerText = originalText;
-                    btn.style.background = '';
-                    btn.style.opacity = '1';
-                }, 4000);
-            }, 1500);
+            fetch("https://script.google.com/macros/s/AKfycbxin_STTPJ9PUwsc90Ny1u7eRMfuwqEPr8Fzb8pkRx0EXWcZnytwAI3NiRhIfBqA7fw/exec", {
+                method: "POST",
+                body: JSON.stringify(data)
+            })
+                .then(response => response.json())
+                .then(result => {
+                    btn.innerHTML = 'Recebido! Entraremos em contato.';
+                    btn.style.background = '#10b981';
+                    form.reset();
+
+                    setTimeout(() => {
+                        btn.innerText = originalText;
+                        btn.style.background = '';
+                        btn.style.opacity = '1';
+                    }, 4000);
+                })
+                .catch(error => {
+                    console.error("Erro ao enviar:", error);
+                    btn.innerHTML = 'Erro ao enviar. Tente novamente.';
+                    btn.style.background = '#ef4444';
+
+                    setTimeout(() => {
+                        btn.innerText = originalText;
+                        btn.style.background = '';
+                        btn.style.opacity = '1';
+                    }, 4000);
+                });
         });
     }
+
 });
