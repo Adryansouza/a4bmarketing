@@ -235,27 +235,28 @@
 
             <form id="leadForm" class="form-futuristic fade-up">
                 <div style="margin-bottom: 20px;">
-                    <input type="text" placeholder="Nome Completo" required
+                    <input type="text" name="nome" placeholder="Nome Completo" required
                         style="width: 100%; padding: 15px; border-radius: 8px;">
                 </div>
                 <div style="margin-bottom: 20px;">
-                    <input type="email" placeholder="E-mail Corporativo" required
+                    <input type="email" name="email" placeholder="E-mail Corporativo" required
                         style="width: 100%; padding: 15px; border-radius: 8px;">
                 </div>
                 <div style="margin-bottom: 20px;">
-                    <input type="tel" placeholder="WhatsApp / Telefone" required
+                    <input type="tel" name="whatsapp" placeholder="WhatsApp / Telefone" required
                         style="width: 100%; padding: 15px; border-radius: 8px;">
                 </div>
                 <div style="margin-bottom: 20px;">
-                    <select style="width: 100%; padding: 15px; border-radius: 8px;">
+                    <select name="faturamento" required style="width: 100%; padding: 15px; border-radius: 8px;">
                         <option value="" disabled selected>Faturamento Mensal</option>
-                        <option>Até R$ 50k</option>
-                        <option>R$ 50k - R$ 200k</option>
-                        <option>Acima de R$ 200k</option>
+                        <option value="Até R$ 50k">Até R$ 50k</option>
+                        <option value="R$ 50k - R$ 200k">R$ 50k - R$ 200k</option>
+                        <option value="Acima de R$ 200k">Acima de R$ 200k</option>
                     </select>
                 </div>
                 <button type="submit" class="btn" style="width: 100%;">Agendar Consultoria Gratuita</button>
             </form>
+
         </div>
     </section>
 
