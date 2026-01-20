@@ -71,6 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Form Handling + Envio para Google Sheets ---
     const form = document.getElementById('leadForm');
 
+
     if (form) {
         form.addEventListener('submit', async function (e) {
             e.preventDefault();
@@ -83,10 +84,10 @@ document.addEventListener('DOMContentLoaded', () => {
             btn.disabled = true;
 
             const data = {
-                nome: form.nome.value,
-                email: form.email.value,
-                whatsapp: form.whatsapp.value,
-                faturamento: form.faturamento.value
+                nome: form.querySelector('[name="nome"]').value,
+                email: form.querySelector('[name="email"]').value,
+                whatsapp: form.querySelector('[name="whatsapp"]').value,
+                faturamento: form.querySelector('[name="faturamento"]').value
             };
 
             try {
