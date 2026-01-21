@@ -1,20 +1,46 @@
 document.addEventListener('DOMContentLoaded', () => {
+    console.log('A4B Marketing Script Loaded');
 
-    // --- Smooth Scroll ---
+    // Smooth Scroll for Anchors
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
             e.preventDefault();
-            const target = document.querySelector(this.getAttribute('href'));
-            if (target) {
-                target.scrollIntoView({ behavior: 'smooth' });
+            const targetId = this.getAttribute('href');
+            if (targetId === '#') return;
+
+            const targetElement = document.querySelector(targetId);
+            if (targetElement) {
+                targetElement.scrollIntoView({
+                    behavior: 'smooth'
+                });
             }
         });
     });
 
-    // --- Fade Up Animation Observer ---
+    // Mobile Menu Toggle
+    const mobileBtn = document.querySelector('.mobile-menu-btn');
+    const navMenu = document.querySelector('.desktop-nav');
+
+    if (mobileBtn && navMenu) {
+        mobileBtn.addEventListener('click', () => {
+            mobileBtn.classList.toggle('active');
+            navMenu.classList.toggle('active');
+            document.body.style.overflow = navMenu.classList.contains('active') ? 'hidden' : '';
+        });
+
+        // Close menu when clicking a link
+        document.querySelectorAll('.desktop-nav a').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileBtn.classList.remove('active');
+                navMenu.classList.remove('active');
+                document.body.style.overflow = '';
+            });
+        });
+    }
+
+    // Intersection Observer for Animations
     const observerOptions = {
-        threshold: 0.1,
-        rootMargin: "0px 0px -50px 0px"
+        threshold: 0.1
     };
 
     const observer = new IntersectionObserver((entries) => {
@@ -25,101 +51,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }, observerOptions);
 
-    document.querySelectorAll('.fade-up').forEach(el => {
-        observer.observe(el);
-    });
-
-    // --- Number Counter Animation ---
-    const statsSection = document.querySelector('.stats-grid');
-    let statsAnimated = false;
-
-    const statsObserver = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting && !statsAnimated) {
-                statsAnimated = true;
-                animateNumbers();
-            }
-        });
-    }, { threshold: 0.5 });
-
-    if (statsSection) {
-        statsObserver.observe(statsSection);
-    }
-
-    function animateNumbers() {
-        const counters = document.querySelectorAll('.stat-number');
-        counters.forEach(counter => {
-            const target = +counter.getAttribute('data-target');
-            let count = 0;
-            const inc = target / 50;
-
-            const updateCount = () => {
-                count += inc;
-                if (count < target) {
-                    counter.innerText = Math.ceil(count);
-                    setTimeout(updateCount, 20);
-                } else {
-                    if (target === 2000000) counter.innerText = "+2M";
-                    if (target === 15000) counter.innerText = "+15k";
-                    if (target === 98) counter.innerText = "98%";
-                }
-            };
-            updateCount();
-        });
-    }
-
-    // --- Form Handling + Envio para Google Sheets ---
-    const form = document.getElementById('leadForm');
-
-    if (form) {
-        form.addEventListener('submit', async function (e) {
-            e.preventDefault();
-
-            const btn = form.querySelector('button');
-            const originalText = btn.innerText;
-
-            btn.innerText = 'Enviando...';
-            btn.style.opacity = '0.7';
-            btn.disabled = true;
-
-            const formData = new FormData();
-            formData.append("nome", form.querySelector('[name="nome"]').value);
-            formData.append("email", form.querySelector('[name="email"]').value);
-            formData.append("whatsapp", form.querySelector('[name="whatsapp"]').value);
-            formData.append("faturamento", form.querySelector('[name="faturamento"]').value);
-
-            try {
-                const response = await fetch(
-                    "https://script.google.com/macros/s/AKfycbxin_STTPJ9PUwsc90Ny1u7eRMfuwqEPr8Fzb8pkRx0EXWcZnytwAI3NiRhIfBqA7fw/exec",
-                    {
-                        method: "POST",
-                        body: formData
-                    }
-                );
-
-                const result = await response.json();
-
-                if (result.status === "sucesso") {
-                    btn.innerText = 'Recebido! Entraremos em contato.';
-                    btn.style.background = '#10b981';
-                    form.reset();
-                } else {
-                    throw new Error("Erro na API");
-                }
-
-            } catch (error) {
-                console.error("Erro ao enviar:", error);
-                btn.innerText = 'Erro ao enviar. Tente novamente.';
-                btn.style.background = '#ef4444';
-            }
-
-            setTimeout(() => {
-                btn.innerText = originalText;
-                btn.style.background = '';
-                btn.style.opacity = '1';
-                btn.disabled = false;
-            }, 4000);
-        });
-    }
-
+    const animatedElements = document.querySelectorAll('.glass-card, .hero-content');
+    animatedElements.forEach(el => observer.observe(el));
 });
